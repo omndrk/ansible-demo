@@ -1,6 +1,19 @@
-# Ansible Nginx Demo
+# Ansible Infrastructure Demo
 
-Ansible control node setup managing multiple remote servers from a single machine.
+Ansible control node setup managing multiple remote servers with a complete monitoring stack.
+
+## Architecture
+Control Node (Mac/Linux)
+│
+└── Ansible
+│
+├── Web Servers (x2)
+│   ├── nginx
+│   └── node_exporter
+│
+└── Monitoring Server (x1)
+├── Prometheus
+└── Grafana
 
 ## Features
 - Nginx installation and configuration
@@ -8,47 +21,54 @@ Ansible control node setup managing multiple remote servers from a single machin
 - Variables - no hardcoded values
 - Ansible Vault - encrypted sensitive data
 - Roles - organized reusable structure
+- Prometheus - metrics collection from all servers
+- Grafana - visualization dashboard (Node Exporter Full - ID 1860)
 
-## Structure
-inventory          # server inventory
-site.yml           # main playbook
-roles/
-nginx/
-tasks/         # installation and config tasks
-handlers/      # service restart handler
-vars/          # role variables
+## Roles
+| Role | Description |
+|---|---|
+| nginx | Install, configure and start nginx |
+| node_exporter | Deploy Prometheus Node Exporter |
+| prometheus | Install and configure Prometheus server |
+| grafana | Install Grafana and connect to Prometheus |
 
 ## Inventory
-Servers are defined in the inventory file by group.
-Add as many servers as needed — Ansible will configure all of them simultaneously with one command:
+Servers are defined by group — add as many as needed:
 
 ```ini
 [webservers]
 server1_ip
 server2_ip
 
-[dbservers]
-db1_ip
-db2_ip
-
-[all:vars]
-ansible_ssh_private_key_file=~/.ssh/your_key.pem                      # use your key here
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+[monitoring]
+monitoring_server_ip
 
 [webservers:vars]
-ansible_user=ec2-user                                                 # use your username here
+ansible_user=ec2-user
 
-[dbservers:vars]
-ansible_user=ubuntu                                                   # use your username here
+[monitoring:vars]
+ansible_user=ec2-user
+
+[all:vars]
+ansible_ssh_private_key_file=~/.ssh/your_key.pem
+```
 
 ## Usage
 ```bash
-# Run against all servers
-ansible-playbook -i inventory site.yml --ask-vault-pass
-
-# Run against specific group only
-ansible-playbook -i inventory site.yml --limit webservers --ask-vault-pass
-
 # Test connectivity to all servers
 ansible -i inventory all -m ping
+
+# Deploy everything
+ansible-playbook -i inventory site.yml
+
+# Deploy with vault encrypted variables
+ansible-playbook -i inventory site.yml --ask-vault-pass
+
+# Target specific group only
+ansible-playbook -i inventory site.yml --limit webservers
 ```
+
+## Monitoring
+- Prometheus UI: `http://monitoring_server_ip:9090`
+- Grafana UI: `http://monitoring_server_ip:3000`
+- Node Exporter metrics: `http://any_server_ip:9100/metrics`
