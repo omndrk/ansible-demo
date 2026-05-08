@@ -5,3 +5,11 @@
 
   roles:
     - nginx
+    - node_exporter
+
+- name: Setup Monitoring Server
+  hosts: monitoring
+  become: true
+  roles:
+    - prometheus
+    - grafana

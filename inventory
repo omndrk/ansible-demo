@@ -1,6 +1,9 @@
 [webservers]
-server1_ip_here
-server2_ip_here
+54.215.134.165  
+13.57.214.16
+
+[monitoring]
+54.176.105.110
 
 [all:vars]
 ansible_user=ec2-user
