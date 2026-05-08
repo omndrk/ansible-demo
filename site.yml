@@ -1,0 +1,7 @@
+---
+- name: Config Webservers
+  hosts: webservers
+  become: true
+
+  roles:
+    - nginx

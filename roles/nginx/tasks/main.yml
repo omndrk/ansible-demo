@@ -1,0 +1,29 @@
+---
+- name: Install nginx
+  dnf:
+    name: "{{ web_package }}"
+    state: present
+
+- name: Copy Config
+  copy:
+    content: |
+      server{
+        listen {{ web_port }};
+        server_name localhost;
+        location / {
+          root {{ web_root }};
+        }
+      }
+    dest: /etc/nginx/conf.d/default.conf
+  notify: Restart nginx
+
+- name: Start nginx
+  systemd:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Create index page
+  copy:
+    content: "Hello from {{ inventory_hostname }}"
+    dest: /usr/share/nginx/html/index.html
