@@ -3,17 +3,19 @@
 Ansible control node setup managing multiple remote servers with a complete monitoring stack.
 
 ## Architecture
+```
 Control Node (Mac/Linux)
-│
 └── Ansible
-│
-├── Web Servers (x2)
-│   ├── nginx
-│   └── node_exporter
-│
-└── Monitoring Server (x1)
-├── Prometheus
-└── Grafana
+    │
+    ├── Web Servers (x2)
+    │   ├── nginx
+    │   └── node_exporter
+    │
+    └── Monitoring Server (x1)
+        ├── node_exporter
+        ├── Prometheus
+        └── Grafana
+```
 
 ## Features
 - Nginx installation and configuration
